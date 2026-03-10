@@ -30,6 +30,11 @@
 
 <script>
     function findHatWinners() {
+        const container = document.getElementById('hat-winners');
+        if (container.children.length > 0) {
+            container.innerHTML = '';
+            return;
+        }
         up.navigate({ url: '@Url.Action("HatWinners")', method: 'post', target: '#hat-winners' });
     }
 </script>
