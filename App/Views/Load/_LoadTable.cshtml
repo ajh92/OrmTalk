@@ -1,0 +1,109 @@
+@model LoadIndexViewModel
+
+<div id="load-table">
+@if (Model.Loads.Count == 0)
+{
+    <div class="border-4 border-dashed border-black p-12 text-center">
+        <p class="text-2xl font-black uppercase tracking-tight">No loads yet</p>
+        <p class="text-sm mt-2 uppercase tracking-widest">Create one to get started</p>
+    </div>
+}
+else
+{
+    <div class="space-y-4">
+@foreach (LoadListItem load in Model.Loads)
+{
+            <div class="border-4 border-black">
+                <div class="flex items-center justify-between bg-black text-white px-4 py-3">
+                    <div class="flex items-center gap-6">
+                        <span class="text-lg font-black">LOAD #@load.Id</span>
+                        <span class="text-sm font-bold uppercase tracking-wider opacity-80">@load.CustomerName</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <a href="@Url.Action("Edit", new { id = load.Id })"
+                           up-layer="new modal"
+                           up-size="large"
+                           up-target="#load-form-panel"
+                           class="px-3 py-1 bg-white text-black font-black text-xs uppercase
+                                  border-2 border-white hover:bg-black hover:text-white hover:border-white
+                                  transition-colors cursor-pointer">
+                            Edit
+                        </a>
+                        <button type="button"
+                                onclick="confirmDelete(@load.Id)"
+                                class="px-3 py-1 bg-red-600 text-white font-black text-xs uppercase
+                                       border-2 border-red-600 hover:bg-white hover:text-red-600
+                                       transition-colors cursor-pointer">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+
+                @if (load.Stops.Count > 0)
+                {
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b-2 border-black bg-gray-100">
+                                <th class="px-4 py-2 text-left text-xs font-black uppercase tracking-widest">Stop #</th>
+                                <th class="px-4 py-2 text-left text-xs font-black uppercase tracking-widest">Start</th>
+                                <th class="px-4 py-2 text-left text-xs font-black uppercase tracking-widest">End</th>
+                                <th class="px-4 py-2 text-left text-xs font-black uppercase tracking-widest">Timezone</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+@foreach (StopDisplayItem stop in load.Stops)
+{
+                                <tr class="border-b border-black last:border-b-0 hover:bg-yellow-50">
+                                    <td class="px-4 py-2 font-bold">@stop.SequenceNumber</td>
+                                    <td class="px-4 py-2 text-sm">@stop.Start.Replace("T", " ")</td>
+                                    <td class="px-4 py-2 text-sm">@stop.End.Replace("T", " ")</td>
+                                    <td class="px-4 py-2 text-xs uppercase tracking-wider">@stop.TimeZone</td>
+                                </tr>
+}
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="px-4 py-3 text-sm uppercase tracking-wider opacity-60">No stops</div>
+                }
+            </div>
+}
+    </div>
+}
+
+<script>
+    function confirmDelete(loadId) {
+        const html = `
+            <div id="delete-confirm" class="bg-white min-w-[400px]">
+                <div class="bg-red-600 text-white px-6 py-4">
+                    <h2 class="text-xl font-black uppercase tracking-tight">Confirm Delete</h2>
+                </div>
+                <div class="p-6 space-y-6">
+                    <p class="font-bold text-lg">
+                        Permanently delete <span class="font-black">LOAD #${loadId}</span>?
+                    </p>
+                    <p class="text-sm uppercase tracking-wider opacity-60">This action cannot be undone.</p>
+                    <div class="flex gap-3 pt-4 border-t-4 border-black">
+                        <button onclick="executeDelete(${loadId})"
+                                class="flex-1 px-6 py-3 bg-red-600 text-white font-black uppercase tracking-wide
+                                       border-4 border-red-600 hover:bg-white hover:text-red-600 transition-colors cursor-pointer">
+                            Delete
+                        </button>
+                        <a up-dismiss
+                           class="px-6 py-3 font-black uppercase tracking-wide text-center
+                                  border-4 border-black hover:bg-black hover:text-white transition-colors cursor-pointer">
+                            Cancel
+                        </a>
+                    </div>
+                </div>
+            </div>`;
+        up.layer.open({ content: html, mode: 'modal', size: 'medium' });
+    }
+
+    function executeDelete(loadId) {
+        up.layer.current.dismiss();
+        up.navigate({ url: '/Load/Delete/' + loadId, method: 'post', target: '#load-table' });
+    }
+</script>
+</div>

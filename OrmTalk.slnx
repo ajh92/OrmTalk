@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="App/App.csproj" />
+  <Project Path="Data/Data.csproj" />
+  <Project Path="Service/Service.csproj" />
+  <Project Path="TimeUtils/TimeUtils.csproj" />
+</Solution>

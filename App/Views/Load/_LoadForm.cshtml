@@ -1,0 +1,73 @@
+@using System.Linq
+@using App.Controllers
+@model LoadFormViewModel
+
+<div id="load-form-panel" class="bg-white min-w-[600px]">
+    <div class="bg-black text-white px-6 py-4">
+        <h2 class="text-xl font-black uppercase tracking-tight">
+            @(Model.IsEdit ? $"Edit Load #{Model.Id}" : "New Load")
+        </h2>
+    </div>
+
+    <form method="post" asp-action="@(Model.IsEdit ? "Edit" : "Create")" asp-route-id="@Model.Id" up-submit up-target="#load-table" up-layer="parent" class="p-6 space-y-6">
+
+        <div>
+            <label class="block text-xs font-black uppercase tracking-widest mb-2">Customer</label>
+@if (Model.IsEdit)
+{
+                <input type="hidden" name="CustomerId" value="@Model.CustomerId" />
+                <div class="w-full border-4 border-black px-3 py-2 font-bold bg-gray-100">
+                    @(Model.Customers.FirstOrDefault((CustomerOption c) => c.Id == Model.CustomerId)?.Name)
+                </div>
+}
+else
+{
+                <select name="CustomerId"
+                        class="w-full border-4 border-black px-3 py-2 font-bold bg-white
+                               focus:outline-none focus:border-yellow-400 transition-colors">
+                    <option value="">— Select Customer —</option>
+@foreach (CustomerOption customer in Model.Customers)
+{
+                        <option value="@customer.Id" selected="@(customer.Id == Model.CustomerId)">
+                            @customer.Name
+                        </option>
+}
+                </select>
+}
+        </div>
+
+        <div>
+            <div class="flex items-center justify-between mb-4">
+                <label class="text-xs font-black uppercase tracking-widest">Stops</label>
+                <button type="button"
+                        onclick="addStop(this)"
+                        data-url="@Url.Action("AddStopFields")"
+                        class="px-3 py-1 bg-black text-white font-black text-xs uppercase
+                               border-2 border-black hover:bg-white hover:text-black
+                               transition-colors cursor-pointer">
+                    + Add Stop
+                </button>
+            </div>
+
+            <div id="stop-list" class="space-y-4">
+@for (int i = 0; i < Model.Stops.Count; i++)
+{
+    @await Html.PartialAsync("_StopFields", new StopFieldsPartialModel(i, Model.Stops[i]))
+}
+            </div>
+        </div>
+
+        <div class="flex gap-3 pt-4 border-t-4 border-black">
+            <button type="submit"
+                    class="flex-1 px-6 py-3 bg-black text-white font-black uppercase tracking-wide
+                           border-4 border-black hover:bg-white hover:text-black transition-colors cursor-pointer">
+                @(Model.IsEdit ? "Update Load" : "Create Load")
+            </button>
+            <a up-dismiss
+               class="px-6 py-3 font-black uppercase tracking-wide text-center
+                      border-4 border-black hover:bg-black hover:text-white transition-colors cursor-pointer">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>

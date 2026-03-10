@@ -1,0 +1,35 @@
+@model LoadIndexViewModel
+@{
+    ViewData["Title"] = "Load Management";
+}
+
+<div class="space-y-6">
+    <div class="flex items-center justify-between border-b-4 border-black pb-4">
+        <h1 class="text-4xl font-black uppercase tracking-tighter">Load Management</h1>
+        <div class="flex gap-3">
+            <button onclick="findHatWinners()"
+                    class="px-6 py-3 bg-yellow-400 text-black font-black uppercase tracking-wide text-sm
+                           border-4 border-black hover:bg-yellow-300 transition-colors cursor-pointer">
+                🎩 Hat Winners
+            </button>
+            <a href="@Url.Action("Create")"
+               up-layer="new modal"
+               up-size="large"
+               up-target="#load-form-panel"
+               class="px-6 py-3 bg-black text-white font-black uppercase tracking-wide text-sm
+                      border-4 border-black hover:bg-white hover:text-black transition-colors cursor-pointer">
+                + New Load
+            </a>
+        </div>
+    </div>
+
+    <div id="hat-winners"></div>
+
+    @await Html.PartialAsync("_LoadTable", Model)
+</div>
+
+<script>
+    function findHatWinners() {
+        up.navigate({ url: '@Url.Action("HatWinners")', method: 'post', target: '#hat-winners' });
+    }
+</script>

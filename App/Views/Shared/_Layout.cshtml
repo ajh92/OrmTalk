@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - OrmTalk</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        mono: ['"JetBrains Mono"', '"Fira Code"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+                    },
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://unpkg.com/unpoly@3/unpoly.min.css" />
+    <script src="https://unpkg.com/unpoly@3/unpoly.min.js"></script>
+    <style>
+        * { font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace; }
+        up-modal-box { border: 4px solid black !important; border-radius: 0 !important; }
+        up-modal-dismiss { display: none !important; }
+    </style>
+</head>
+<body class="bg-white text-black min-h-screen flex flex-col">
+    <header class="border-b-4 border-black">
+        <nav class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+            <a asp-controller="Load" asp-action="Index"
+               class="text-2xl font-black tracking-tighter uppercase hover:bg-black hover:text-white px-2 transition-colors">
+                ORMTALK
+            </a>
+            <div class="flex gap-1">
+                <a asp-controller="Load" asp-action="Index"
+                   class="px-3 py-1 border-2 border-black font-bold text-sm uppercase hover:bg-black hover:text-white transition-colors">
+                    Loads
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="flex-1 max-w-6xl mx-auto px-4 py-8 w-full">
+        @RenderBody()
+    </main>
+
+    <footer class="border-t-4 border-black mt-auto">
+    </footer>
+
+    @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        function addStop(btn) {
+            const list = document.getElementById('stop-list');
+            const index = list.children.length;
+            const url = btn.getAttribute('data-url') + '?index=' + index;
+            fetch(url)
+                .then(r => r.text())
+                .then(html => {
+                    list.insertAdjacentHTML('beforeend', html);
+                    const newStop = list.lastElementChild;
+                    const startInput = newStop.querySelector('input[type="datetime-local"]');
+                    if (startInput) startInput.focus();
+                });
+        }
+    </script>
+</body>
+</html>

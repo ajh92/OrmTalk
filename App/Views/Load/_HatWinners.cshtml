@@ -1,0 +1,66 @@
+@using System.Linq
+@model LoadIndexViewModel
+
+<div id="hat-winners">
+@if (Model.Loads.Count == 0)
+{
+    <div class="border-4 border-dashed border-yellow-500 bg-yellow-50 p-8 text-center mb-6">
+        <p class="text-2xl font-black uppercase tracking-tight">🎩 No hat winners</p>
+        <p class="text-sm mt-2 uppercase tracking-widest">
+            No customers have &gt;2 loads with &gt;10 total appointment hours in the past month
+        </p>
+    </div>
+}
+else
+{
+    <div class="border-4 border-yellow-500 bg-yellow-50 mb-6">
+        <div class="bg-yellow-400 px-6 py-4 border-b-4 border-yellow-500">
+            <h2 class="text-2xl font-black uppercase tracking-tight">
+                🎩 Hat Winners — @(Model.Loads.Select((LoadListItem l) => l.CustomerName).Distinct().Count()) Customer(s)
+            </h2>
+            <p class="text-xs font-bold uppercase tracking-widest mt-1 opacity-70">
+                @Model.Loads.Count qualifying load(s) · Customers marked eligible for hat
+            </p>
+        </div>
+
+        <div class="space-y-0 divide-y-4 divide-yellow-500">
+@foreach (LoadListItem load in Model.Loads)
+{
+                <div>
+                    <div class="flex items-center justify-between bg-black text-yellow-400 px-4 py-3">
+                        <div class="flex items-center gap-6">
+                            <span class="text-lg font-black">LOAD #@load.Id</span>
+                            <span class="text-sm font-bold uppercase tracking-wider opacity-80">@load.CustomerName</span>
+                        </div>
+                    </div>
+
+                    @if (load.Stops.Count > 0)
+                    {
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b-2 border-yellow-500 bg-yellow-100">
+                                    <th class="px-4 py-2 text-left text-xs font-black uppercase tracking-widest">Stop #</th>
+                                    <th class="px-4 py-2 text-left text-xs font-black uppercase tracking-widest">Start</th>
+                                    <th class="px-4 py-2 text-left text-xs font-black uppercase tracking-widest">End</th>
+                                    <th class="px-4 py-2 text-left text-xs font-black uppercase tracking-widest">Timezone</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+@foreach (StopDisplayItem stop in load.Stops)
+{
+                                    <tr class="border-b border-yellow-300 last:border-b-0 hover:bg-yellow-200">
+                                        <td class="px-4 py-2 font-bold">@stop.SequenceNumber</td>
+                                        <td class="px-4 py-2 text-sm">@stop.Start.Replace("T", " ")</td>
+                                        <td class="px-4 py-2 text-sm">@stop.End.Replace("T", " ")</td>
+                                        <td class="px-4 py-2 text-xs uppercase tracking-wider">@stop.TimeZone</td>
+                                    </tr>
+}
+                            </tbody>
+                        </table>
+                    }
+                </div>
+}
+        </div>
+    </div>
+}
+</div>
